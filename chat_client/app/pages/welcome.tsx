@@ -1,7 +1,13 @@
+import MainChat from "~/components/chat/MainChat";
+import Profile from "~/components/profile/profile";
+import Sidebar from "~/components/Sidebar";
+
 export function Welcome() {
   return (
-    <>
-    <h4 className="text-4xl text-purple-950 font-semibold">Hello From Chat App</h4>
-    </>
+    <div className="flex max-h-[98vh]">
+      <Sidebar />
+      <MainChat/>
+      <Profile/>
+    </div>
   );
 }
