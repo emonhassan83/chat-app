@@ -1,16 +1,53 @@
-import React from "react";
-import { Form, Input, Button, Typography, Row, Col, Card } from "antd";
-import { Link } from "react-router";
+import React, { useEffect } from "react";
+import { Button, Typography, Row, Col, Card } from "antd";
+import { Link, useNavigate } from "react-router";
+import ChatForm from "~/components/form/ChatForm";
+import ChatInput from "~/components/form/ChatInput";
+import axios from "axios";
+import { toast } from "sonner";
+import { jwtDecode } from "jwt-decode";
 
 const { Title, Paragraph } = Typography;
 
 const LoginPage: React.FC = () => {
-  const onFinish = (values: any) => {
-    console.log("Login form submitted:", values);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const defaultValues = {
+    email: "",
+    password: "",
   };
 
+  const onSubmit = (values: any) => {
+    axios
+      .post("http://localhost:5000/users/login", values)
+      .then((res) => {
+        if (res?.data) {
+          toast.success("User login successfully!");
+
+          localStorage.setItem("token", res.data.data);
+          const user = jwtDecode(res.data.data);
+          navigate("/", { state: user });
+        }
+      })
+      .catch((err) => {
+        toast.error(err?.message);
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token]);
+
   return (
-    <Row justify="center" align="middle" style={{ minHeight: "100vh", margin: "auto 20px" }}>
+    <Row
+      justify="center"
+      align="middle"
+      style={{ minHeight: "100vh", margin: "auto 20px" }}
+    >
       <Col
         xs={24}
         md={12}
@@ -24,9 +61,12 @@ const LoginPage: React.FC = () => {
         }}
       >
         <div style={{ textAlign: "start", maxWidth: "400px" }}>
-          <Title level={2} style={{ color: "#1890ff" }}>Chat App</Title>
+          <Title level={2} style={{ color: "#1890ff" }}>
+            Chat App
+          </Title>
           <Paragraph>
-            Welcome to our platform. Please log in to continue and manage your activities seamlessly.
+            Welcome to our platform. Please log in to continue and manage your
+            activities seamlessly.
           </Paragraph>
         </div>
       </Col>
@@ -42,32 +82,24 @@ const LoginPage: React.FC = () => {
         }}
       >
         <Card style={{ width: "100%", maxWidth: "400px" }}>
-          <Title level={3} style={{ textAlign: "start", fontSize: "20px", marginBottom: "16px" }}>
+          <Title
+            level={3}
+            style={{
+              textAlign: "start",
+              fontSize: "20px",
+              marginBottom: "16px",
+            }}
+          >
             Login To Access App
           </Title>
-          <Form layout="vertical" onFinish={onFinish}>
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[{ required: true, message: "Please enter your email" }]}
-            >
-              <Input placeholder="Enter your email" />
-            </Form.Item>
+          <ChatForm onSubmit={onSubmit} defaultValues={defaultValues}>
+            <ChatInput type="email" name="email" label="Email" />
+            <ChatInput type="password" name="password" label="Password" />
 
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[{ required: true, message: "Please enter your password" }]}
-            >
-              <Input.Password placeholder="Enter your password" />
-            </Form.Item>
-
-            <Form.Item>
-              <Button type="primary" htmlType="submit" block>
-                Login
-              </Button>
-            </Form.Item>
-          </Form>
+            <Button type="primary" htmlType="submit" block>
+              Login
+            </Button>
+          </ChatForm>
           <Paragraph style={{ marginTop: "12px", textAlign: "center" }}>
             New to Chat App? <Link to="/sign-up">Sign Up</Link>
           </Paragraph>
