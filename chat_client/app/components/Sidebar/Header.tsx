@@ -3,7 +3,7 @@ import { Avatar, Typography } from "antd";
 
 const { Title, Text } = Typography;
 
-const AppHeader: React.FC = () => {
+const AppHeader: React.FC = ({user}: any) => {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "#1890ff", padding: "12px" }}>
       {/* Avatar */}
@@ -11,8 +11,8 @@ const AppHeader: React.FC = () => {
 
       {/* User Info */}
       <div style={{ color: "white" }}>
-        <Title level={5} style={{ margin: 0, color: "white" }}>Jone Doe</Title>
-        <Text style={{ color: "white" }}>UI Frontend Developer</Text>
+        <Title level={5} style={{ margin: 0, color: "white" }}>{user?.name}</Title>
+        <Text style={{ color: "white" }}>{user?.email}</Text>
       </div>
       <MoreOutlined style={{ color: "white", fontSize: "24px", marginLeft: "auto" }} />
     </div>

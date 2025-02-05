@@ -5,12 +5,22 @@ import ChatForm from "~/components/form/ChatForm";
 import ChatInput from "~/components/form/ChatInput";
 import axios from "axios";
 import { toast } from "sonner";
+import { jwtDecode } from "jwt-decode";
 
 const { Title, Paragraph } = Typography;
 
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const isUserExists = localStorage.getItem("user");
+    if (typeof window !== "undefined") {
+      if (isUserExists) {
+        navigate("/", JSON.parse(isUserExists));
+      }
+      console.log(isUserExists);
+    }
+  }, []);
 
   const defaultValues = {
     name: "",
@@ -23,8 +33,12 @@ const SignUpPage: React.FC = () => {
       .post("http://localhost:5000/users/register", values)
       .then((res) => {
         if (res?.data) {
-          localStorage.setItem("token", res.data.data);
           toast.success("User sign up successfully!");
+          localStorage.setItem("token", res.data.data);
+
+          const user = jwtDecode(res.data.data);
+          localStorage.setItem("user", JSON.stringify(user));
+          navigate("/", { state: user });
         }
       })
       .catch((err) => {
@@ -32,12 +46,6 @@ const SignUpPage: React.FC = () => {
         console.log(err);
       });
   };
-
-  useEffect(() => {
-    if (token) {
-      navigate("/");
-    }
-  }, []);
 
   return (
     <Row

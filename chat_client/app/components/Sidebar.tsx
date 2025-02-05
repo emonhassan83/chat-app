@@ -9,12 +9,12 @@ const data = Array.from({ length: 20 }, (_, i) => ({
   title: `User Chat ${i + 1}`,
 }));
 
-const Sidebar = () => {
+const Sidebar = ({user}: any) => {
   const [activeTab, setActiveTab] = useState("1");
 
   return (
     <div className="w-[25%] flex flex-col max-h-[100vh] overflow-hidden">
-      <Header />
+      <Header user={user}/>
 
       <Tabs
         activeKey={activeTab}

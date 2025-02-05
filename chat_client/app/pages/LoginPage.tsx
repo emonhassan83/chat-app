@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Typography, Row, Col, Card } from "antd";
 import { Link, useNavigate } from "react-router";
 import ChatForm from "~/components/form/ChatForm";
@@ -11,12 +11,20 @@ const { Title, Paragraph } = Typography;
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const defaultValues = {
-    email: "",
-    password: "",
+    email: "jawed@gmail.com",
+    password: "123456",
   };
+
+  useEffect(() => {
+    const isUserExists = localStorage.getItem("user");
+    if (typeof window !== "undefined") {
+      if (isUserExists) {
+        navigate("/", JSON.parse(isUserExists));
+      }
+    }
+  }, []);
 
   const onSubmit = (values: any) => {
     axios
@@ -26,7 +34,9 @@ const LoginPage: React.FC = () => {
           toast.success("User login successfully!");
 
           localStorage.setItem("token", res.data.data);
+
           const user = jwtDecode(res.data.data);
+          localStorage.setItem("user", JSON.stringify(user));
           navigate("/", { state: user });
         }
       })
@@ -35,12 +45,6 @@ const LoginPage: React.FC = () => {
         console.log(err);
       });
   };
-
-  useEffect(() => {
-    if (token) {
-      navigate("/");
-    }
-  }, [token]);
 
   return (
     <Row
