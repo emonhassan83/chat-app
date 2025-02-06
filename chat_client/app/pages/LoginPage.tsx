@@ -18,7 +18,7 @@ const LoginPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const isUserExists = localStorage.getItem("user");
+    const isUserExists = sessionStorage.getItem("user");
     if (typeof window !== "undefined") {
       if (isUserExists) {
         navigate("/", JSON.parse(isUserExists));
@@ -33,10 +33,10 @@ const LoginPage: React.FC = () => {
         if (res?.data) {
           toast.success("User login successfully!");
 
-          localStorage.setItem("token", res.data.data);
+          sessionStorage.setItem("token", res.data.data);
 
           const user = jwtDecode(res.data.data);
-          localStorage.setItem("user", JSON.stringify(user));
+          sessionStorage.setItem("user", JSON.stringify(user));
           navigate("/", { state: user });
         }
       })

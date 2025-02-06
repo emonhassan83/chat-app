@@ -4,7 +4,7 @@ import Footer from "./Footer";
 import { useEffect } from "react";
 import socket from "~/utils/Socket";
 
-const MainChat = ({ roomData }: any) => {
+const MainChat = ({ roomData, handleSentMessage }: any) => {
   useEffect(() => {
     console.log(socket.id);
   }, [socket]);
@@ -15,7 +15,7 @@ const MainChat = ({ roomData }: any) => {
         <>
           <Header roomData={roomData}/>
           <ChatArea />
-          <Footer />
+          <Footer handleSentMessage={handleSentMessage}/>
         </>
       ) : (
         <>Please Select a User for Chat</>

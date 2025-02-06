@@ -11,20 +11,24 @@ export function Welcome() {
   const [onlineUsers, setOnlineUsers] = useState<Array<string>>([]);
   const [roomData, setRoomData] = useState({
     room: null,
+    receiver: null,
   });
+  const [allMessage, setAllMessage] = useState<any[]>([]);
   const navigate = useNavigate();
   const socketRef = useRef<Socket | null>(null);
 
   const user =
     typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("user") || "null")
+      ? JSON.parse(sessionStorage.getItem("user") || "null")
       : null;
 
   useEffect(() => {
     console.log("🔍 useEffect running...");
 
     if (!user) {
-      console.log("❌ No user found in localStorage, redirecting to login...");
+      console.log(
+        "❌ No user found in sessionStorage, redirecting to login..."
+      );
       navigate("/login");
       return;
     }
@@ -65,16 +69,41 @@ export function Welcome() {
 
       socketRef.current?.on("USER_ADDED", handleUserAdded);
 
+      socketRef.current?.on("RECEIVE_MSG", (data) => {
+        console.log("From Another User: " ,data);
+        setAllMessage((prevState) => [...prevState, data]);
+      });
+
       return () => {
-        socketRef.current?.off("USER_ADDED", handleUserAdded);
+        socketRef.current?.on("disconnect", handleUserAdded);
       };
     }
   }, [isConnected]);
 
+  const handleSentMessage = (message: any) => {
+    console.log(socketRef.current);
+    if (socketRef?.current?.connected) {
+      const data = {
+        message,
+        receiver: roomData?.receiver,
+        sender: user
+      };
+      socketRef.current.emit("SENT_MSG", data);
+      setAllMessage((prevState) => [...prevState, data]);
+    }
+  };
+
+  console.log(allMessage);
+  
   return (
     <div className="flex max-h-[98vh]">
-      <Sidebar user={user} onlineUsers={onlineUsers} roomData={roomData} setRoomData={setRoomData} />
-      <MainChat roomData={roomData}/>
+      <Sidebar
+        user={user}
+        onlineUsers={onlineUsers}
+        roomData={roomData}
+        setRoomData={setRoomData}
+      />
+      <MainChat roomData={roomData} handleSentMessage={handleSentMessage} />
       <Profile user={user} />
     </div>
   );
