@@ -9,12 +9,13 @@ const data = Array.from({ length: 20 }, (_, i) => ({
   title: `User Chat ${i + 1}`,
 }));
 
-const Sidebar = ({user}: any) => {
+const Sidebar = ({ user, onlineUsers }: any) => {
   const [activeTab, setActiveTab] = useState("1");
+  const sidebarUser = onlineUsers?.filter((item: any)=> item?._id !== user?._id )
 
   return (
     <div className="w-[25%] flex flex-col max-h-[100vh] overflow-hidden">
-      <Header user={user}/>
+      <Header user={user} />
 
       <Tabs
         activeKey={activeTab}
@@ -64,9 +65,23 @@ const Sidebar = ({user}: any) => {
             </div>
           }
         >
-          <div className="overflow-y-auto max-h-[calc(100vh-120px)] p-2">
-            Content of User List
-          </div>
+          <List
+            itemLayout="horizontal"
+            dataSource={sidebarUser}
+            renderItem={(user: any, index: number) => (
+              <List.Item>
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`}
+                    />
+                  }
+                  title={<a href="#">{user?.name}</a>}
+                  description={user?.email}
+                />
+              </List.Item>
+            )}
+          />
         </TabPane>
       </Tabs>
     </div>

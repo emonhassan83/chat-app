@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import type { Socket } from "socket.io-client";
 import MainChat from "~/components/chat/MainChat";
 import Profile from "~/components/profile/profile";
@@ -8,12 +8,17 @@ import socket from "~/utils/Socket";
 
 export function Welcome() {
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [onlineUsers, setOnlineUsers] = useState<Array<string>>([]);
+  const [roomData, setRoomData] = useState({
+    room: null,
+  });
   const navigate = useNavigate();
-  const { state } = useLocation();
   const socketRef = useRef<Socket | null>(null);
 
-  // Ensure localStorage access only in browser
-  const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
+  const user =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("user") || "null")
+      : null;
 
   useEffect(() => {
     console.log("🔍 useEffect running...");
@@ -55,6 +60,7 @@ export function Welcome() {
 
       const handleUserAdded = (data: any) => {
         console.log("USER_ADDED data:", data);
+        setOnlineUsers(data);
       };
 
       socketRef.current?.on("USER_ADDED", handleUserAdded);
@@ -64,10 +70,10 @@ export function Welcome() {
       };
     }
   }, [isConnected]);
-  
+
   return (
     <div className="flex max-h-[98vh]">
-      <Sidebar user={user} />
+      <Sidebar user={user} onlineUsers={onlineUsers} />
       <MainChat />
       <Profile user={user} />
     </div>

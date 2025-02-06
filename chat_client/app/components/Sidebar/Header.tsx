@@ -3,7 +3,11 @@ import { Avatar, Typography } from "antd";
 
 const { Title, Text } = Typography;
 
-const AppHeader: React.FC = ({user}: any) => {
+interface HeaderProps {
+  user: any;
+}
+
+const AppHeader: React.FC<HeaderProps>  = ({user}) => {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "#1890ff", padding: "12px" }}>
       {/* Avatar */}
