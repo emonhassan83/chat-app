@@ -9,13 +9,13 @@ import {
   
   const { Title, Text } = Typography;
   
-  const Header = () => {
+  const Header = ({roomData}: any) => {
     return (
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between", // Ensures that items are spread across
+          justifyContent: "space-between",
           gap: "12px",
           padding: "12px",
           width: "100%",
@@ -34,9 +34,9 @@ import {
           <Avatar size={64} icon={<UserOutlined />} />
           <div>
             <Title level={5} style={{ margin: 0 }}>
-              Jone Doe
+             {roomData?.receiver?.name}
             </Title>
-            <Text>UI Frontend Developer</Text>
+            <Text>{roomData?.receiver?.email}</Text>
           </div>
         </div>
   

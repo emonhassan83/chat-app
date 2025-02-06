@@ -73,8 +73,8 @@ export function Welcome() {
 
   return (
     <div className="flex max-h-[98vh]">
-      <Sidebar user={user} onlineUsers={onlineUsers} />
-      <MainChat />
+      <Sidebar user={user} onlineUsers={onlineUsers} roomData={roomData} setRoomData={setRoomData} />
+      <MainChat roomData={roomData}/>
       <Profile user={user} />
     </div>
   );

@@ -9,9 +9,19 @@ const data = Array.from({ length: 20 }, (_, i) => ({
   title: `User Chat ${i + 1}`,
 }));
 
-const Sidebar = ({ user, onlineUsers }: any) => {
+const Sidebar = ({ user, onlineUsers, roomData, setRoomData }: any) => {
   const [activeTab, setActiveTab] = useState("1");
-  const sidebarUser = onlineUsers?.filter((item: any)=> item?._id !== user?._id )
+  const sidebarUser = onlineUsers?.filter(
+    (item: any) => item?._id !== user?._id
+  );
+
+  const handleChatRooms = (user: any) => {
+    setRoomData({
+      ...roomData,
+      room: "test",
+      receiver: user,
+    });
+  };
 
   return (
     <div className="w-[25%] flex flex-col max-h-[100vh] overflow-hidden">
@@ -69,7 +79,10 @@ const Sidebar = ({ user, onlineUsers }: any) => {
             itemLayout="horizontal"
             dataSource={sidebarUser}
             renderItem={(user: any, index: number) => (
-              <List.Item>
+              <List.Item
+                className="cursor-pointer"
+                onClick={() => handleChatRooms(user)}
+              >
                 <List.Item.Meta
                   avatar={
                     <Avatar

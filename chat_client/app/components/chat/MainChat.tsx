@@ -4,17 +4,22 @@ import Footer from "./Footer";
 import { useEffect } from "react";
 import socket from "~/utils/Socket";
 
-const MainChat = () => {
-  useEffect(()=>{
+const MainChat = ({ roomData }: any) => {
+  useEffect(() => {
     console.log(socket.id);
-    
-  },[socket])
+  }, [socket]);
 
   return (
     <div className="w-[50vw] ">
-      <Header />
-      <ChatArea />
-      <Footer/>
+      {roomData?.room ? (
+        <>
+          <Header roomData={roomData}/>
+          <ChatArea />
+          <Footer />
+        </>
+      ) : (
+        <>Please Select a User for Chat</>
+      )}
     </div>
   );
 };
