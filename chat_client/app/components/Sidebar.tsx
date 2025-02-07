@@ -20,6 +20,7 @@ const Sidebar = ({ user, onlineUsers, roomData, setRoomData }: any) => {
       ...roomData,
       room: "test",
       receiver: user,
+      message: []
     });
   };
 

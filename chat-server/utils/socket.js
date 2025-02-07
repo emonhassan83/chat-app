@@ -13,7 +13,11 @@ const addUser = (user, socketId) => {
 };
 
 const removeUser = (socketId) => {
-  onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
+  const isExist = onlineUsers = onlineUsers.filter((user) => user.socketId === socketId);
+
+  if (isExist !== -1) {
+    onlineUsers.splice(isExist, 1);
+  }
 };
 
 const socketInit = (server) => {
@@ -32,13 +36,17 @@ const socketInit = (server) => {
       io.emit("USER_ADDED", onlineUsers);
     });
 
+    socket.on("SENT_MSG", (message) => {
+      console.log("Sent message from frontend:", message);
+      socket.broadcast.to(message.receiver.socketId).emit("RECEIVE_MSG", message);
+    });
+
     socket.on("disconnect", () => {
       console.log("User disconnected:", socket.id);
       removeUser(socket.id);
       io.emit("USER_ADDED", onlineUsers);
     });
   });
-
 };
 
 module.exports = socketInit;

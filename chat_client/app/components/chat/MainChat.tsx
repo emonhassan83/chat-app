@@ -4,7 +4,7 @@ import Footer from "./Footer";
 import { useEffect } from "react";
 import socket from "~/utils/Socket";
 
-const MainChat = ({ roomData, handleSentMessage }: any) => {
+const MainChat = ({ roomData, handleSentMessage, allMessage, user }: any) => {
   useEffect(() => {
     console.log(socket.id);
   }, [socket]);
@@ -14,7 +14,7 @@ const MainChat = ({ roomData, handleSentMessage }: any) => {
       {roomData?.room ? (
         <>
           <Header roomData={roomData}/>
-          <ChatArea />
+          <ChatArea  allMessage={allMessage} user={user}/>
           <Footer handleSentMessage={handleSentMessage}/>
         </>
       ) : (

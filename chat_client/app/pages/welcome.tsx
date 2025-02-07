@@ -71,7 +71,9 @@ export function Welcome() {
 
       socketRef.current?.on("RECEIVE_MSG", (data) => {
         console.log("From Another User: " ,data);
-        setAllMessage((prevState) => [...prevState, data]);
+        if (data.sender._id !== user._id) {
+          setAllMessage((prevState) => [...prevState, data]);
+        }
       });
 
       return () => {
@@ -103,7 +105,7 @@ export function Welcome() {
         roomData={roomData}
         setRoomData={setRoomData}
       />
-      <MainChat roomData={roomData} handleSentMessage={handleSentMessage} />
+      <MainChat roomData={roomData} handleSentMessage={handleSentMessage} allMessage={allMessage} user={user} />
       <Profile user={user} />
     </div>
   );
