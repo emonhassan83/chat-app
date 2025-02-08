@@ -2,8 +2,8 @@ const express = require("express");
 const { createServer } = require("http");
 const cors = require("cors");
 const userController = require("./app/controller/user.controller");
+const messageController = require("./app/route/message.route");
 const connectMongoDB = require("./config/db");
-const http = require("http");
 const socket = require("./utils/socket");
 
 const app = express();
@@ -14,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/users", userController);
+app.use("/message", messageController);
 
 connectMongoDB()
   .then(() => {
