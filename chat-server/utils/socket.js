@@ -1,4 +1,5 @@
 const socket = require("socket.io");
+const { saveMessage } = require("../app/controller/message.controller");
 
 let onlineUsers = []; // Stored in memory, lost on restart
 
@@ -39,6 +40,7 @@ const socketInit = (server) => {
     socket.on("SENT_MSG", (message) => {
       console.log("Sent message from frontend:", message);
       socket.broadcast.to(message.receiver.socketId).emit("RECEIVE_MSG", message);
+      saveMessage(message);
     });
 
     socket.on("disconnect", () => {
