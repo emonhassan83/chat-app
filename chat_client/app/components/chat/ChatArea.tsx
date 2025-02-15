@@ -1,7 +1,7 @@
 import { Avatar, List } from "antd";
 import { DeleteOutlined, ShareAltOutlined } from "@ant-design/icons";
 
-const ChatArea = ({ allMessage, user }: any) => {
+const ChatArea = ({ allMessage, user, handleDeleteMessage }: any) => {
   return (
     <div className="h-[78%] overflow-y-auto bg-[#f9f9f9] p-4">
       {/* Date Tag */}

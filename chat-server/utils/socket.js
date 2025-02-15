@@ -37,12 +37,16 @@ const socketInit = (server) => {
       io.emit("USER_ADDED", onlineUsers);
     });
 
-    socket.on("SENT_MSG", (message) => {
+    socket.on("SENT_MSG", async(message) => {
       console.log("Sent message from frontend:", message);
-      socket.broadcast.to(message.receiver.socketId).emit("RECEIVE_MSG", message);
-      saveMessage(message);
+      const isSaved = await saveMessage(message);
+      socket.to(message.receiver.socketId).to(message.sender.socketId).emit("RECEIVE_MSG", isSaved);
     });
 
+    socket.on("DELETED_MSG", (message) => {
+      socket.broadcast.to(message.receiver.socketId).emit("DELETED_MSG", message);
+    });
+    
     socket.on("disconnect", () => {
       console.log("User disconnected:", socket.id);
       removeUser(socket.id);

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import type { Socket } from "socket.io-client";
@@ -70,9 +71,17 @@ export function Welcome() {
       socketRef.current?.on("USER_ADDED", handleUserAdded);
 
       socketRef.current?.on("RECEIVE_MSG", (data) => {
-        console.log("From Another User: " ,data);
+        console.log("From Another User: ", data);
         if (data.sender._id !== user._id) {
           setAllMessage((prevState) => [...prevState, data]);
+        }
+      });
+
+      socketRef.current?.on("DELETED_MSG", (data) => {
+        if (data.sender._id !== user._id) {
+          setAllMessage((prevState) =>
+            prevState.filter((item: any) => item?._id !==data.message._id)
+          );    
         }
       });
 
@@ -85,18 +94,41 @@ export function Welcome() {
   const handleSentMessage = (message: any) => {
     console.log(socketRef.current);
     if (socketRef?.current?.connected) {
+      let sender = user;
+      sender.socketId = socketRef?.current?.id;
+
       const data = {
         message,
         receiver: roomData?.receiver,
-        sender: user
+        sender,
       };
       socketRef.current.emit("SENT_MSG", data);
-      setAllMessage((prevState) => [...prevState, data]);
+      // setAllMessage((prevState) => [...prevState, data]);
     }
   };
 
+  const handleDeleteMessage = (id: string) => {
+    axios.delete(`http://localhost:5000/message/${id}`)
+      .then((res) => {
+        if (socketRef?.current?.connected) {
+          const data = {
+            message: res.data?.data,
+            receiver: roomData?.receiver,
+            sender: user
+          };
+          socketRef.current.emit("DELETED_MSG", data);
+          setAllMessage((prevState) =>
+            prevState.filter((data: any) => data?._id !== res.data.data._id)
+          );          
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  };
+
   console.log(allMessage);
-  
+
   return (
     <div className="flex max-h-[98vh]">
       <Sidebar
@@ -105,7 +137,7 @@ export function Welcome() {
         roomData={roomData}
         setRoomData={setRoomData}
       />
-      <MainChat roomData={roomData} handleSentMessage={handleSentMessage} allMessage={allMessage} user={user} />
+      <MainChat roomData={roomData} handleSentMessage={handleSentMessage} allMessage={allMessage} user={user} handleDeleteMessage={handleDeleteMessage} />
       <Profile user={user} />
     </div>
   );
